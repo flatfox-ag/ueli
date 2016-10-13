@@ -4,7 +4,7 @@ import json
 import utils
 
 
-VERSION = '0.1'
+VERSION = '0.0.1'
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
