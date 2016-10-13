@@ -2,10 +2,13 @@
 
 Ueli the servant helps to build and deploy at flatfox
 
+## auto completion
+
+Put this into your `bashrc` or alike: `. /PATH/TO/ueli/ueli-complete.sh`
+
 ## todos
 
 - [ ] check if all kubernetes fils metadata.name begin with ueli.projectname
-
 
 ## test local
 
@@ -31,8 +34,17 @@ Ueli the servant helps to build and deploy at flatfox
         python setup.py sdist upload -r pypi
 
 
+## create auto complete bash file
+
+    virtualenv env
+    . env/bin/activate
+    pip install -r requirements.txt
+    pip install -e .
+    _UELI_COMPLETE=source ueli > ueli-complete.sh
+
 ## helpful links
 
 - http://peterdowns.com/posts/first-time-with-pypi.html
 - https://packaging.python.org/distributing/
 - https://realpython.com/blog/python/comparing-python-command-line-parsing-libraries-argparse-docopt-click/
+- http://click.pocoo.org/5/

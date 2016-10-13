@@ -27,8 +27,7 @@ def info(config, details):
     configuration file was loaded. Prints a hole configuration dump with the
     `--details` option.
     """
-    click.secho("configuration looks fine", fg='green')
-    click.echo("project name: {}".format(config['metadata']['name']))
+    click.secho("project name: {}".format(config['metadata']['name']), fg='green')
     if details:
         click.echo(json.dumps(config, indent=4))
 
