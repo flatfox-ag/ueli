@@ -1,36 +1,37 @@
-import os.path
 import click
 import json
 import utils
 
-
 VERSION = '0.0.1'
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.version_option(version=VERSION)
-def ueli():
-    pass
+@click.pass_context
+def ueli(ctx):
+    """
+    Ueli the servant helps to build and deploy at flatfox.
+    """
+    # Main entry point. We use the context object to store our configuration
+    # so they are available to all other commands through context
+    ctx.obj['config'] = utils.load_config_file()
 
 
 @ueli.command()
-@click.option('--details', is_flag=True, help='Show all config details')
-def info(**kwargs):
-    file, config = utils.load_config_file()
-    if config:
-        utils.print_info("project name", config['metadata']['name'])
-        if kwargs['details']:
-            utils.print_info("config file", file)
-            print json.dumps(config, indent=4)
-    else:
-        print "no config file found './{}'".format(utils.CONFIG_FILE_NAME)
+@click.option('--details', is_flag=True, help='Show all configuration details')
+@utils.pass_config
+def info(config, details):
+    """
+    Shows basic configuration information to e.g. check if the right
+    configuration file was loaded. Prints a hole configuration dump with the
+    `--details` option.
+    """
+    click.secho("configuration looks fine", fg='green')
+    click.echo("project name: {}".format(config['metadata']['name']))
+    if details:
+        click.echo(json.dumps(config, indent=4))
 
 
 def main():
-    ueli()
-
-
-if __name__ == '__main__':
-    ueli()
+    ueli(obj={})
