@@ -1,3 +1,7 @@
+# Ueli
+
+Ueli the servant helps to build and deploy at flatfox
+
 ## todos
 
 - [ ] check if all kubernetes fils metadata.name begin with ueli.projectname
@@ -6,7 +10,7 @@
 ## test local
 
 0. activate another python env
-0. install dependencies e.g. `pip install click`
+0. install dependencies e.g. `pip install -r /PATH/TO/ueli/requirements.txt`
 0. install ueli `pip install -e /PATH/TO/ueli`
 
 ## create new version
