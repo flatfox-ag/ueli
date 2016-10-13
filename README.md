@@ -15,8 +15,20 @@ Ueli the servant helps to build and deploy at flatfox
 
 ## create new version
 
-    git tag 0.1 -m "tagged version"
-    git push --tags origin master
+0. create new version (update `main.py` and create a git tag):
+
+        git tag 0.1 -m "tagged version"
+        git push --tags origin master
+
+0. try new package on pypi test server
+
+        python setup.py register -r pypitest
+        python setup.py sdist upload -r pypitest
+
+0. if everything works fine, upload to pypi live server
+
+        python setup.py register -r pypi
+        python setup.py sdist upload -r pypi
 
 
 ## helpful links

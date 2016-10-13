@@ -1,4 +1,7 @@
 .DS_Store
 ueli.egg-info
+MANIFEST
+README.html
+dist
 env
 *.pyc
