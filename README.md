@@ -47,4 +47,4 @@ Put this into your `bashrc` or alike: `. /PATH/TO/ueli/ueli-complete.sh`
 - http://peterdowns.com/posts/first-time-with-pypi.html
 - https://packaging.python.org/distributing/
 - https://realpython.com/blog/python/comparing-python-command-line-parsing-libraries-argparse-docopt-click/
-- http://click.pocoo.org/5/
+- http://click.pocoo.org/6/

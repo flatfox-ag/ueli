@@ -1,51 +1,63 @@
 import os.path
 import yaml
-import click
-
-from functools import update_wrapper
-
-CONFIG_FILE_NAME = 'ueli.yaml'
+import subprocess
 
 
-def load_config_file():
+def load_config_file(filename):
     """
     Tries to locate and load an ueli.yaml configuration file from the working
     directory, where ueli is called from. Returns a dictionary of settings.
     """
     working_dir = os.path.abspath('.')
-    config_file = os.path.join(working_dir, CONFIG_FILE_NAME)
+    config_file = os.path.join(working_dir, filename)
     exists = os.path.exists(config_file)
 
     if exists:
-        with open(config_file, 'r') as file:
-            # TODO: look for specific things in yaml, do not just copy the
-            #       hole thing...
-            config = yaml.load(file)
-            config['configFile'] = config_file
-            return config
+        with open(config_file, 'r') as f:
+            return yaml.load(f)
 
     return None
 
 
-def pass_config(f):
+def get_git_info():
     """
-    Checks if config is set on the context object and passes it to the
-    decorated function or aborts if not.
+    Returns the current git branch and short commit hash
+    """
+    branch = run_local('git rev-parse --abbrev-ref HEAD')
+    commit = run_local('git rev-parse --short --verify {}'.format(branch))
+    clean = int(run_local('git status --porcelain | wc -l')) < 1
+    return branch, commit, clean
 
-    If used together with @click.pass_context, wrap @pass_config around:
 
-        @utils.pass_config
-        @click.pass_context
-        def example(ctx, config):
-            pass
+def commit_is_pushed(commit):
+    run_local('git fetch --all')
+    return int(run_local('git branch -r --contains 3440850 | wc -l')) > 0
+
+
+def get_build_tag(project, image, branch, commit):
+    """
+    Constructs full build tag for a given image. The build tag is of the
+    form: {project}_{image}:{branch}.{commit} e.g.
+
+        flatfox-crawler_webapp:feature-xy.982405a
 
     """
-    @click.pass_context
-    def new_func(ctx, *args, **kwargs):
-        config = ctx.obj['config']
-        if not config:
-            click.secho("no config file found ./{}".format(CONFIG_FILE_NAME),
-                        fg='red', bold=True)
-            ctx.abort()
-        return ctx.invoke(f, config, *args, **kwargs)
-    return update_wrapper(new_func, f)
+    return '{image_name}:{tag_name}'.format(
+        image_name=get_image_name(project=project, image=image),
+        tag_name=get_tag_name(branch=branch, commit=commit))
+
+
+def get_image_name(project, image):
+    return '{project}_{image}'.format(project=project, image=image)
+
+
+def get_tag_name(branch, commit):
+    return '{branch}.{commit}'.format(branch=branch, commit=commit)
+
+
+def run_local(cmd):
+    return (
+        subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+        .stdout
+        .read()
+        .strip())
