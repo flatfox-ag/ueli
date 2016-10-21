@@ -1,19 +1,16 @@
 import os.path
 import yaml
 import subprocess
+import click
 
 
-def load_config_file(filename):
-    """
-    Tries to locate and load an ueli.yaml configuration file from the working
-    directory, where ueli is called from. Returns a dictionary of settings.
-    """
+def load_yaml_file(path):
     working_dir = os.path.abspath('.')
-    config_file = os.path.join(working_dir, filename)
-    exists = os.path.exists(config_file)
+    yaml_file = os.path.join(working_dir, path)
+    exists = os.path.exists(yaml_file)
 
     if exists:
-        with open(config_file, 'r') as f:
+        with open(yaml_file, 'r') as f:
             return yaml.load(f)
 
     return None
@@ -29,35 +26,37 @@ def get_git_info():
     return branch, commit, clean
 
 
-def commit_is_pushed(commit):
-    run_local('git fetch --all')
-    return int(run_local('git branch -r --contains 3440850 | wc -l')) > 0
-
-
-def get_build_tag(project, image, branch, commit):
+def get_build_tag(service, branch, commit):
     """
-    Constructs full build tag for a given image. The build tag is of the
-    form: {project}_{image}:{branch}.{commit} e.g.
+    Constructs full build tag for a service. The build tag is of the
+    form: {service}:{branch}.{commit} e.g.
 
         flatfox-crawler_webapp:feature-xy.982405a
 
     """
-    return '{image_name}:{tag_name}'.format(
-        image_name=get_image_name(project=project, image=image),
-        tag_name=get_tag_name(branch=branch, commit=commit))
-
-
-def get_image_name(project, image):
-    return '{project}_{image}'.format(project=project, image=image)
+    return '{service}:{tag_name}'.format(
+        service=service, tag_name=get_tag_name(branch=branch, commit=commit))
 
 
 def get_tag_name(branch, commit):
     return '{branch}.{commit}'.format(branch=branch, commit=commit)
 
 
-def run_local(cmd):
-    return (
-        subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
-        .stdout
-        .read()
-        .strip())
+def get_config_name(service):
+    return '{service}-config'.format(service=service)
+
+
+def get_secret_name(service):
+    return '{service}-secret'.format(service=service)
+
+
+def run_local(cmd, output=True, verbose=False, execute=True):
+    ctx = click.get_current_context()
+
+    if verbose or ctx.obj['verbose']:
+        click.secho(u'$ {}'.format(cmd), fg='magenta')
+
+    if execute:
+        if output:
+            return subprocess.check_output(cmd, shell=True).strip()
+        subprocess.call(cmd, shell=True)

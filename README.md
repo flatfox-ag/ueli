@@ -8,7 +8,7 @@ Put this into your `bashrc` or alike: `. /PATH/TO/ueli/ueli-complete.sh`
 
 ## todos
 
-- [ ] check if all kubernetes fils metadata.name begin with ueli.projectname
+- [ ] check container image names in usedBy are named like project
 
 ## test local
 
