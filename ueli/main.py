@@ -1,6 +1,6 @@
 import click
 import json
-import utils
+from ueli import utils
 
 
 VERSION = '0.0.1'
