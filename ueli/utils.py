@@ -51,6 +51,10 @@ def get_secret_name(service):
 
 
 def run_local(cmd, output=True, verbose=False, execute=True):
+    """
+    TODO: handle output option like fabric
+    https://github.com/fabric/fabric/blob/master/fabric/operations.py#L1152
+    """
     ctx = click.get_current_context()
 
     if verbose or ctx.obj['verbose']:
