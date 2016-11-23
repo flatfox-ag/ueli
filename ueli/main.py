@@ -94,8 +94,9 @@ def init(ctx):
 
 @ueli.command()
 @click.option('--force', is_flag=True, help='Froce build, ignore dirty git.')
+@click.option('--tag', is_flag=False, help='Override tag', default=None)
 @click.pass_context
-def build(ctx, force):
+def build(ctx, force, tag):
     """
     Build image from current branch.
     """
@@ -104,7 +105,7 @@ def build(ctx, force):
     service = config['service']
 
     branch, commit, clean = utils.get_git_info()
-    build_tag = utils.get_build_tag(service=service, branch=branch, commit=commit)
+    build_tag = utils.get_build_tag(service=service, branch=branch, commit=commit, tag=tag)
 
     # Repository needs to be clean to build. Otherwise the image can contain
     # uncommited changes.
@@ -125,8 +126,9 @@ def build(ctx, force):
 
 
 @ueli.command()
+@click.option('--tag', is_flag=False, help='Override tag', default=None)
 @click.pass_context
-def push(ctx):
+def push(ctx, tag):
     """
     Push image to remote registry.
     """
@@ -134,7 +136,9 @@ def push(ctx):
     service = config['service']
 
     branch, commit, clean = utils.get_git_info()
-    build_tag = utils.get_build_tag(service=service, branch=branch, commit=commit)
+
+    build_tag = utils.get_build_tag(service=service, branch=branch, commit=commit, tag=tag)
+
     remote = '{gcloud_registry}/{gcloud_project}'.format(
         gcloud_registry=config['gcloud']['registry'],
         gcloud_project=config['gcloud']['project'])

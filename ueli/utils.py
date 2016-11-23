@@ -26,7 +26,7 @@ def get_git_info():
     return branch, commit, clean
 
 
-def get_build_tag(service, branch, commit):
+def get_build_tag(service, branch, commit, tag=None):
     """
     Constructs full build tag for a service. The build tag is of the
     form: {service}:{branch}.{commit} e.g.
@@ -34,8 +34,8 @@ def get_build_tag(service, branch, commit):
         flatfox-crawler_webapp:feature-xy.982405a
 
     """
-    return '{service}:{tag_name}'.format(
-        service=service, tag_name=get_tag_name(branch=branch, commit=commit))
+    tag_name = tag if tag else get_tag_name(branch=branch, commit=commit)
+    return '{service}:{tag_name}'.format(service=service, tag_name=tag_name)
 
 
 def get_tag_name(branch, commit):
